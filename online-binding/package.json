@@ -1,0 +1,23 @@
+{
+  "name": "com.caseware.binding.simple",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "provider-bindings-api",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "localtest": "npx @caseware/provider-bindings-tests run --port 3000"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@caseware/provider-bindings-api": "4.8.0",
+    "@caseware/provider-bindings-models": "4.8.0",
+    "@caseware/provider-bindings-util": "4.8.0",
+    "fetch": "^1.1.0",
+    "memorystream": "^0.3.1",
+    "stream-array": "^1.1.2",
+    "through2": "^3.0.1",
+    "xml-js": "^1.6.11"
+  }
+}

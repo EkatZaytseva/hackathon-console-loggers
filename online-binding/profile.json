@@ -1,0 +1,31 @@
+{
+  "id": "online-binding",
+  "name": {
+    "en": "Online Binding",
+    "fr": "Online Binding (fr)",
+    "de": "Online Binding (de)",
+    "nl": "Online Binding (nl)",
+    "es": "Online Binding (es)"
+  },
+  "description": {
+    "en": "description content",
+    "fr": "description content (fr)",
+    "de": "description content (de)",
+    "nl": "description content (nl)",
+    "es": "description content (es)"
+  },
+  "website": {
+    "en": "https://www.example.com",
+    "fr": "https://www.example.com",
+    "de": "https://www.example.com",
+    "nl": "https://www.example.com",
+    "es": "https://www.example.com"
+  },
+  "icon": {
+    "en": "/assets/icon.png",
+    "fr": "/assets/icon.png",
+    "de": "/assets/icon.png",
+    "nl": "/assets/icon.png",
+    "es": "/assets/icon.png"
+  }
+}
