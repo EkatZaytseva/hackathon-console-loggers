@@ -95,5 +95,29 @@
         "Balance": 201,
         "Date": "2020-10-29"    
     }]
+},
+{
+    "id": "123ac9",
+    "Description": "AWS: Storage and Data Management",
+    "Balances": [{
+        "Balance": 20319,
+        "Date": "2020-10-29"
+    },
+    {
+        "Balance": 435,
+        "Date": "2020-10-29"    
+    }]
+},
+{
+    "id": "123ac10",
+    "Description": "AWS: Deploying and Provisioning",
+    "Balances": [{
+        "Balance": 9858,
+        "Date": "2020-10-29"
+    },
+    {
+        "Balance": 231,
+        "Date": "2020-10-29"    
+    }]
 }
 ]
