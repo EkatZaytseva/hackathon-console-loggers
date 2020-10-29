@@ -28,13 +28,13 @@
     let orgData = JSON.parse(fs.readFileSync('../data/organizations.json', 'utf8'));
     let acData = JSON.parse(fs.readFileSync('../data/accounts.json', 'utf8'));
 
-    const { orgId } = orgData.id;
+    const orgId  = orgData.id;
  
    /**
     * SPECIFIC_ACCOUNT and ALL_ACCOUNTS are two flags that will indicate if the request is asking for a specific account or all accounts.
     */
    //const { SPECIFIC_ACCOUNT, ALL_ACCOUNTS } = context.flags
-   const {  ALL_ACCOUNTS } = true;
+   const  ALL_ACCOUNTS  = true;
  
    /**
     * Not using PERIODS because our Synthetic Generator already let's the user set the start/end dates

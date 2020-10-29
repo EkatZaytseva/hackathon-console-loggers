@@ -16,7 +16,7 @@ module.exports = new StreamBinding(async (credentials, context) => {
     let orgData = JSON.parse(fs.readFileSync('../data/organizations.json', 'utf8'));
     let trData = JSON.parse(fs.readFileSync('../data/transctions.json', 'utf8'));
   
-    const { orgId } = orgData.id; //context.params
+    const orgId = orgData.id; //context.params
 
   /**
    * Create a transformer stream that will push your transactions to the client as you get them.
