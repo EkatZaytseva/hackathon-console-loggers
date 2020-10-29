@@ -1,24 +1,66 @@
-const through2 = require('through2')
+const { Organization, StaticBinding } = require('@caseware/provider-bindings-models')
+const { createLogger } = require('@caseware/provider-bindings-util')
 const streamify = require('stream-array')
-const { Organization, StreamBinding } = require('@caseware/provider-bindings-models')
+const through2 = require('through2')
+//const { getFiles } = require('./util/request')
 
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms))
-}
+const { error } = createLogger('organizations')
 
-module.exports = new StreamBinding(async (credentials, context) => {
-  const { orgId } = context.data.params
+const orgData = require('./organizations.json')
+
+/**
+ * [GET /organizations]
+ * This function is called when the service needs to access a single or list of available
+ * organizations. Fetch the list of organizations and map each of them to the
+ * given Organization class.
+ *
+ * @param {any} credentials - The return value of the auth function
+ * @param {BindingContext} context - The context data of the request
+ * @return {array[Organization]} - A list of organization objects
+ */
+
+module.exports = new StaticBinding(async (credentials, context) => {
+  /**
+   * orgId is what you have selected to be the id property of any returned Organization object.
+   */
+  const fs = require('fs');
+  // let orgData = JSON.parse(fs.readFileSync('./organizations.json', 'utf8'));
+
+  const orgId = orgData.id; //context.params
+ 
   const organizations = [
-    JSON.stringify({ id: '101.abc', displayName: 'Microsoft', name: 'Microsoft-1' }),
-    JSON.stringify({ id: '105.def', displayName: 'Apple Inc.', name: 'Apple Inc.-1' }),
-    JSON.stringify({ id: '103.ghi', displayName: 'Amazon', name: 'Amazon-1' }),
-    JSON.stringify({ id: '104.jkl', displayName: 'Google', name: 'Google-1' }),
-  ]
+    JSON.stringify({ id: orgData.id, displayName: orgData.displayName, name: orgData.name})
+    ]
+  
+  /*
+  try {
+    await getFiles(orgId).then((data) => {
+      data.forEach((line) => {
+        organizations.push(
+          new Organization({
+            id: line.id,
+            name: line.name,
+            displayName: line.name,
+          }),
+        )
+      })
+    })
+  } catch (e) {
+    error(e)
+  }
+  */
+
+  // if (orgId) {
+  //   // Returns a specific organization if `orgId` is specified in the context object
+  //   return organizations.filter((organization) => organization.id === orgId)
+  // }
+
   const streamifyStream = streamify(organizations)
 
   const transform = context.createTransformStream(obj => {
     return new Organization(JSON.parse(obj.toString()))
   })
+
   const filter = through2.obj(function(chunk, enc, callback) {
     if (orgId && chunk.id === orgId) {
       this.push(chunk)
@@ -41,10 +83,6 @@ module.exports = new StreamBinding(async (credentials, context) => {
     }
     callback()
   })
-
-  // ******* Error before invoking context.createFinalStream ***
-  // throw Error ("Error before invoking context.createFinalStream")
-  // *********** End of Test *********///
 
   context.createStream(streamifyStream, transform, filter)
   let hasOrgs = true

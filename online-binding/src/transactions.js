@@ -1,109 +1,48 @@
 const { Transaction, StreamBinding } = require('@caseware/provider-bindings-models')
+//const { getTrans } = require('./util/request')
 
-const transactions = [
-  {
-    id: '11',
-    number: '11',
-    posting: '2019-09-10',
-    accountID: 'c',
-    created: '2019-09-10',
-    total: 9000.09,
-    person: 'Anna',
-    prop: 'erty',
-  },
-  {
-    id: '22',
-    number: '22',
-    posting: '2019-10-03',
-    created: '2019-10-03',
-    accountID: 'c',
-    total: 902.19,
-    person: 'Jim',
-    prop: 'erty',
-  },
-  {
-    id: '33',
-    number: '33',
-    posting: '2019-09-03',
-    created: '2019-09-03',
-    accountID: 'c',
-    total: 800.99,
-    person: 'Steve',
-    prop: 'erty',
-  },
-  {
-    id: '44',
-    number: '44',
-    posting: '2019-09-08',
-    created: '2019-09-08',
-    accountID: 'c',
-    total: 11.08,
-    person: 'Bob',
-    prop: 'erty',
-  },
-  {
-    id: '55',
-    number: '55',
-    posting: '2019-07-10',
-    created: '2019-07-10',
-    accountID: 'c',
-    total: 9100.09,
-    person: 'Steve',
-    prop: 'erty',
-  },
-  {
-    id: '66',
-    number: '66',
-    posting: '2019-09-10',
-    created: '2019-09-10',
-    accountID: 'c',
-    total: 90340.09,
-    person: 'Steve',
-    prop: 'erty',
-  },
-  {
-    id: '77',
-    number: '77',
-    posting: '2019-09-11',
-    created: '2019-09-11',
-    accountID: 'c',
-    total: 800.79,
-    person: 'Jade',
-    prop: 'erty',
-  },
-  {
-    id: '88',
-    number: '88',
-    posting: '2019-09-01',
-    created: '2009-09-01',
-    accountID: 'c',
-    total: 45600.93,
-    person: 'Jib',
-    prop: 'erty',
-  },
-]
-
+/**
+ * [GET /organizations/{orgId}/accounts/{accountId|*}/transactions/{txnEntryId}?from_date=...&to_date=...]
+ * This function is called when the service needs to access a single or list of available
+ * transactions. Fetch the list of transactions and map each of them to the
+ * given Transaction class.
+ *
+ * @param {any} credentials - The return value of the auth function
+ * @param {BindingContext} context - The context of the request
+ */
 module.exports = new StreamBinding(async (credentials, context) => {
-  const { orgId, accountId, txnId } = context.params
-  const { ALL_TXNS_ALL_ACCOUNTS, ALL_TXNS_SPECIFIC_ACCOUNT, SPECIFIC_TXN_SPECIFIC_ACCOUNT } = context.flags
-  // Create a transformer stream that will recieve your raw transactions
-  const transactionStream = context.createTransformStream(
-    data =>
+  
+    const fs = require('fs');
+    let orgData = JSON.parse(fs.readFileSync('../data/organizations.json', 'utf8'));
+    let trData = JSON.parse(fs.readFileSync('../data/transctions.json', 'utf8'));
+  
+    const { orgId } = orgData.id; //context.params
+
+  /**
+   * Create a transformer stream that will push your transactions to the client as you get them.
+   * This is a memory safe pattern that should be practiced to reduce the memory footprint of each
+   * request made to your service.
+   */
+  const transformStream = context.createTransformStream(
+    (line) =>
       new Transaction({
-        entryID: data.id,
-        enteredBy: data.person,
-        amount: data.total,
-        identifieType: data.prop,
-        entryNumber: data.number,
-        postingDate: data.posting,
-        accountID: data.accountID,
+        entryID: line.entry_id,
+        lineNumber: line.line_number,
+        entryNumber: line.entry_number,
+        postingDate: line.posting_date,
+        postingStatus: line.posting_status,
+        amount: line.amount,
+        documentType: line.document_type,
+        accountID: line.account_id,
+        accountMainID: line.account_main_id,
+        accountMainDescription: line.account_main_description,
       }),
   )
 
-  // Write each transactions to the stream as you recieve it
-  transactions.forEach(txn => transactionStream.write(txn))
+  // The transaction stream response
+  const transactionStream = trData; //await getTrans(orgId)
+  const jsonStream = context.filterJSON('*')
 
-  // Close the stream
-  transactionStream.end()
-  context.createStream(transactionStream)
+  // Piping all streams together
+  context.createStream(transactionStream, jsonStream, transformStream)
 })

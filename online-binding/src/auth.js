@@ -1,4 +1,4 @@
-const { CustomAuth, Credentials } = require('@caseware/provider-bindings-models')
+const { CustomAuth, Credentials } = require ('@caseware/provider-bindings-models');
 
 module.exports = new CustomAuth({
   /*
@@ -51,7 +51,8 @@ module.exports = new CustomAuth({
     Handling an unauthorized request is as simple as returning null and the SDK will do the rest.
   */
   getCredentials: async ({ username, password }) => {
-    const tokenString = JSON.stringify({ username, password })
+    // const tokenString = JSON.stringify({ username, password })
+    const tokenString = JSON.stringify("linkedinLearningAccessToken")
 
     return new Credentials({
       accessToken: tokenString,
@@ -76,9 +77,9 @@ module.exports = new CustomAuth({
     Handling an unauthorized request is as simple as returning null and the SDK will do the rest.
   */
   callback: async accessToken => {
-    const { username, password } = JSON.parse(accessToken)
-    const key = `${username}:${password}`.toString('base64')
-    return `Basic ${key}`
+    const token = JSON.parse(accessToken)
+    // const key = `${username}:${password}`.toString('base64')
+    return `Basic ${token}`
   },
   /*
     [POST /auth/refresh]
@@ -96,6 +97,8 @@ module.exports = new CustomAuth({
 
     Handling an unauthorized request is as simple as returning null and the SDK will do the rest.
   */
+
+  // Not needed
   refreshAccessToken: async () => {
     return new Credentials({
       accessToken: 'mock-access-token',
@@ -104,3 +107,4 @@ module.exports = new CustomAuth({
     })
   },
 })
+
