@@ -1,6 +1,7 @@
-const { Transaction, StreamBinding } = require('@caseware/provider-bindings-models')
-//const { getTrans } = require('./util/request')
+const streamify = require('stream-array');
 
+const { Transaction, StreamBinding } = require('@caseware/provider-bindings-models')
+const transactions = require('./transactions.json');
 /**
  * [GET /organizations/{orgId}/accounts/{accountId|*}/transactions/{txnEntryId}?from_date=...&to_date=...]
  * This function is called when the service needs to access a single or list of available
@@ -11,12 +12,6 @@ const { Transaction, StreamBinding } = require('@caseware/provider-bindings-mode
  * @param {BindingContext} context - The context of the request
  */
 module.exports = new StreamBinding(async (credentials, context) => {
-  
-    const fs = require('fs');
-    let orgData = JSON.parse(fs.readFileSync('../data/organizations.json', 'utf8'));
-    let trData = JSON.parse(fs.readFileSync('../data/transctions.json', 'utf8'));
-  
-    const orgId = orgData.id; //context.params
 
   /**
    * Create a transformer stream that will push your transactions to the client as you get them.
@@ -40,9 +35,9 @@ module.exports = new StreamBinding(async (credentials, context) => {
   )
 
   // The transaction stream response
-  const transactionStream = trData; //await getTrans(orgId)
+  const transactionStream = streamify(transactions);
   const jsonStream = context.filterJSON('*')
 
   // Piping all streams together
-  context.createStream(transactionStream, jsonStream, transformStream)
+  return context.createStream(transactionStream, jsonStream, transformStream)
 })
