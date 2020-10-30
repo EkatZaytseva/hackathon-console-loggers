@@ -1,4 +1,4 @@
-const { StaticBinding, NotImplemented } = require('@caseware/provider-bindings-models')
+const { StaticBinding, NotImplemented, Account, AccountBalance } = require('@caseware/provider-bindings-models')
 const accounts = require('./accounts.json');
  
  /**
@@ -25,7 +25,20 @@ const accounts = require('./accounts.json');
  
    if (ALL_ACCOUNTS) {
      // Return the result of all account
-     return accounts
+     const accountsTagged = accounts.map((acc) => {
+       return new Account({
+         id: acc.id,
+         tag: acc.Description,
+         balances:  acc.Balances.map((balance) => {
+           return new AccountBalance({
+             date: new Date(balance.Date),
+             balance: balance.Balance
+           })
+         })
+       })
+     })
+     console.log(accountsTagged)
+     return accountsTagged
    }
  
    // This will never run
