@@ -13,8 +13,8 @@ const { Transaction, StreamBinding } = require('@caseware/provider-bindings-mode
 module.exports = new StreamBinding(async (credentials, context) => {
   
     const fs = require('fs');
-    let orgData = JSON.parse(fs.readFileSync('../data/organizations.json', 'utf8'));
-    let trData = JSON.parse(fs.readFileSync('../data/transctions.json', 'utf8'));
+    let orgData = JSON.parse(fs.readFileSync('./organizations.json', 'utf8'));
+    let trData = JSON.parse(fs.readFileSync('./transctions.json', 'utf8'));
   
     const orgId = orgData.id; //context.params
 
